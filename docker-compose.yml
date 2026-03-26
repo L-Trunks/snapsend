@@ -16,9 +16,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./config.yaml:/app/config.yaml:ro
-    # 生产环境下后端无需对外暴露，Nginx 通过内部网络访问
-    # ports:
-    #   - "8080:8080"
+    ports:
+      - "127.0.0.1:8081:8080"   # 仅宿主机可访问，避免直接暴露公网
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')"]
       interval: 15s
@@ -37,21 +36,11 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - NEXT_PUBLIC_API_URL=${BASE_URL:-http://localhost:8080}
-    # 前端仅供 Nginx 容器内网访问，无需暴露宿主机端口
+    ports:
+      - "127.0.0.1:3001:3000"   # 仅宿主机可访问
     depends_on:
       backend:
         condition: service_healthy
 
-  nginx:
-    image: nginx:alpine
-    container_name: snapsend-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      # - "443:443"  # 启用 HTTPS 时取消注释
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      # - ./ssl:/etc/nginx/ssl:ro  # SSL 证书目录
-    depends_on:
-      - backend
-      - frontend
+  # nginx 容器已移除 —— 使用宿主机已有的 Nginx 统一管理所有站点
+  # 宿主机 Nginx 通过 127.0.0.1:3001 访问前端，127.0.0.1:8081 访问后端
