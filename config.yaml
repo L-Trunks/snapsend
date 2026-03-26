@@ -1,0 +1,35 @@
+# SnapSend 配置文件
+# 所有参数均可通过环境变量覆盖
+
+server:
+  port: 8080
+  host: 0.0.0.0
+  base_url: http://localhost:8080   # 生产环境改为你的域名，如 https://snapsend.example.com
+
+share:
+  code_length: 6
+  code_charset: "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # 排除易混淆字符 0OI1
+  max_file_size: 1073741824          # 单文件最大 1GB
+  max_files_per_share: 10            # 每次分享最多文件数
+  max_text_size: 5242880             # 文本最大 5MB
+  default_expire: 86400              # 默认有效期 1 天（秒）
+  expire_options:
+    - 3600        # 1 小时
+    - 21600       # 6 小时
+    - 86400       # 1 天
+    - 259200      # 3 天
+    - 604800      # 7 天
+  max_expire: 604800                 # 最大有效期 7 天
+
+storage:
+  type: local                        # local 或 s3（暂未实现 s3，预留）
+  local_path: ./data/files           # 本地存储路径
+  cleanup_interval: 600              # 清理间隔 10 分钟（秒）
+
+security:
+  rate_limit_upload: 20              # 单 IP 每小时上传次数
+  rate_limit_query: 60               # 单 IP 每分钟查询次数
+  max_code_attempts: 5               # 取件码最大连续错误次数
+  lockout_duration: 600              # 锁定时间 10 分钟（秒）
+  enable_password: true              # 是否启用取件密码功能
+  enable_custom_code: true           # 是否允许自定义取件码

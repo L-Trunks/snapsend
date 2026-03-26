@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-dark-bg text-white antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+.dark body {
+  @apply bg-dark-bg text-white;
+}
+
+html:not(.dark) body {
+  @apply bg-light-bg text-gray-900;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-dark-muted rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Selection */
+::selection {
+  @apply bg-brand-blue/30 text-white;
+}
+
+/* Focus ring */
+*:focus-visible {
+  @apply outline-none ring-2 ring-brand-blue/50 ring-offset-2 ring-offset-dark-bg;
+}
+
+/* Light mode overrides */
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  @apply bg-light-muted;
+}
+
+html:not(.dark) ::selection {
+  @apply bg-brand-blue/20 text-gray-900;
+}
