@@ -37,7 +37,7 @@ services:
       - TZ=Asia/Shanghai
       - NEXT_PUBLIC_API_URL=${BASE_URL:-http://localhost:8080}
     ports:
-      - "127.0.0.1:3001:3000"   # 仅宿主机可访问
+      - "127.0.0.1:3002:3000"   # 仅宿主机可访问
     depends_on:
       backend:
         condition: service_healthy
