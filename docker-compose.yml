@@ -16,8 +16,9 @@ services:
     volumes:
       - ./data:/app/data
       - ./config.yaml:/app/config.yaml:ro
-    ports:
-      - "8080:8080"
+    # 生产环境下后端无需对外暴露，Nginx 通过内部网络访问
+    # ports:
+    #   - "8080:8080"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')"]
       interval: 15s
@@ -36,8 +37,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - NEXT_PUBLIC_API_URL=${BASE_URL:-http://localhost:8080}
-    ports:
-      - "3000:3000"
+    # 前端仅供 Nginx 容器内网访问，无需暴露宿主机端口
     depends_on:
       backend:
         condition: service_healthy
