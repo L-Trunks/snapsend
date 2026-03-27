@@ -11,10 +11,9 @@ export default function ThemeToggle() {
       <button
         onClick={toggleLang}
         className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium
-          text-gray-400 hover:text-white dark:text-gray-400 dark:hover:text-white
-          light:text-gray-500 light:hover:text-gray-900
-          bg-dark-elevated dark:bg-dark-elevated light:bg-light-elevated
-          border border-dark-border dark:border-dark-border light:border-light-border
+          text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white
+          bg-light-elevated dark:bg-dark-elevated
+          border border-light-border dark:border-dark-border
           hover:border-brand-blue transition-all duration-200"
         title={t.langSwitch}
       >
@@ -25,9 +24,9 @@ export default function ThemeToggle() {
       <button
         onClick={toggleTheme}
         className="p-2 rounded-lg
-          text-gray-400 hover:text-white dark:text-gray-400 dark:hover:text-white
-          bg-dark-elevated dark:bg-dark-elevated light:bg-light-elevated
-          border border-dark-border dark:border-dark-border light:border-light-border
+          text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white
+          bg-light-elevated dark:bg-dark-elevated
+          border border-light-border dark:border-dark-border
           hover:border-brand-blue transition-all duration-200"
         title={t.theme}
         aria-label={t.theme}
