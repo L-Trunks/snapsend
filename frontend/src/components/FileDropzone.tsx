@@ -74,8 +74,15 @@ export default function FileDropzone({ files, onFilesChange, disabled }: FileDro
           </p>
           <p className="text-xs text-gray-400 mt-1">支持所有格式 · 最大 1GB</p>
         </div>
-        <input ref={inputRef} type="file" multiple capture className="hidden"
-          onChange={onChange} disabled={disabled} />
+        {/* 不要加 capture：移动端会强制先开相机，无法选相册/文件 */}
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={onChange}
+          disabled={disabled}
+        />
       </div>
 
       {files.length > 0 && (
