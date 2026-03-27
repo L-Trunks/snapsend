@@ -129,6 +129,22 @@ export function getDownloadUrl(code: string, fileId: number): string {
   return `${API_BASE}/share/${code}/download/${fileId}`;
 }
 
+/** 用于带密码分享的内嵌预览（媒体元素无法附带自定义 Header） */
+export async function fetchShareFileBlob(
+  code: string,
+  fileId: number,
+  password: string
+): Promise<Blob> {
+  const res = await fetch(getDownloadUrl(code, fileId), {
+    headers: { "X-Share-Password": password },
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${res.status}`);
+  }
+  return res.blob();
+}
+
 export function getDownloadAllUrl(code: string): string {
   return `${API_BASE}/share/${code}/download-all`;
 }

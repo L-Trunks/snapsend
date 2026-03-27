@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, Download, Copy, Check, FileText, Package, Clock, AlertCircle } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { getShare, verifyPassword, getDownloadUrl, getDownloadAllUrl, ShareInfo } from "@/lib/api";
+import { getShare, verifyPassword, getDownloadUrl, getDownloadAllUrl, ShareInfo, FileInfo } from "@/lib/api";
 import PasswordModal from "./PasswordModal";
-import { formatBytes, formatDuration, getFileIcon } from "@/lib/utils";
+import MediaPreviewModal from "./MediaPreviewModal";
+import { formatBytes, formatDuration, getFileIcon, getPreviewKind } from "@/lib/utils";
 
 interface PickupPanelProps {
   initialCode?: string;
@@ -21,6 +22,7 @@ export default function PickupPanel({ initialCode = "" }: PickupPanelProps) {
   const [passwordError, setPasswordError] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [textCopied, setTextCopied] = useState(false);
+  const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -205,27 +207,44 @@ export default function PickupPanel({ initialCode = "" }: PickupPanelProps) {
                   </button>
                 )}
               </div>
-              {share.files.map((file) => (
-                <div key={file.id}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg
-                    bg-light-elevated dark:bg-dark-elevated
-                    border border-light-border dark:border-dark-border
-                    hover:border-brand-blue/30 transition-all duration-200 group">
-                  <span className="text-lg flex-shrink-0">{getFileIcon(file.mime_type)}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{file.filename}</p>
-                    <p className="text-xs text-gray-400">{formatBytes(file.size)}</p>
-                  </div>
-                  <button onClick={() => downloadFile(file.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs
-                      bg-white dark:bg-dark-surface
+              {share.files.map((file) => {
+                const canPreview = !!getPreviewKind(file.mime_type);
+                return (
+                  <div key={file.id}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg
+                      bg-light-elevated dark:bg-dark-elevated
                       border border-light-border dark:border-dark-border
-                      text-gray-500 hover:text-brand-blue hover:border-brand-blue/40
-                      transition-all duration-200">
-                    <Download size={12} />{t.downloadFile}
-                  </button>
-                </div>
-              ))}
+                      hover:border-brand-blue/30 transition-all duration-200 group">
+                    <button
+                      type="button"
+                      disabled={!canPreview}
+                      title={canPreview ? t.previewHint : undefined}
+                      onClick={() => canPreview && setPreviewFile(file)}
+                      className={`flex flex-1 min-w-0 items-center gap-3 text-left rounded-lg -m-1 p-1
+                        ${canPreview
+                          ? "cursor-pointer hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
+                          : "cursor-default"
+                        }`}
+                    >
+                      <span className="text-lg flex-shrink-0">{getFileIcon(file.mime_type)}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{file.filename}</p>
+                        <p className="text-xs text-gray-400">{formatBytes(file.size)}</p>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => downloadFile(file.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs flex-shrink-0
+                        bg-white dark:bg-dark-surface
+                        border border-light-border dark:border-dark-border
+                        text-gray-500 hover:text-brand-blue hover:border-brand-blue/40
+                        transition-all duration-200">
+                      <Download size={12} />{t.downloadFile}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -236,6 +255,15 @@ export default function PickupPanel({ initialCode = "" }: PickupPanelProps) {
           onConfirm={handlePasswordConfirm}
           onCancel={() => { setShowPassword(false); setShare(null); }}
           error={passwordError}
+        />
+      )}
+
+      {previewFile && share && (
+        <MediaPreviewModal
+          file={previewFile}
+          shareCode={share.code}
+          password={share.has_password ? enteredPassword : null}
+          onClose={() => setPreviewFile(null)}
         />
       )}
     </div>

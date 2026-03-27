@@ -26,6 +26,19 @@ export function formatSpeed(bytesPerSec: number): string {
   return `${formatBytes(bytesPerSec)}/s`;
 }
 
+export type PreviewKind = "image" | "video" | "audio" | "pdf";
+
+/** 取件页可内嵌预览的类型（点击文件名区域打开弹层） */
+export function getPreviewKind(mimeType?: string | null): PreviewKind | null {
+  if (!mimeType) return null;
+  const m = mimeType.toLowerCase();
+  if (m.startsWith("image/")) return "image";
+  if (m.startsWith("video/")) return "video";
+  if (m.startsWith("audio/")) return "audio";
+  if (m === "application/pdf" || m.includes("pdf")) return "pdf";
+  return null;
+}
+
 export function getFileIcon(mimeType?: string | null): string {
   if (!mimeType) return "📄";
   if (mimeType.startsWith("image/")) return "🖼️";
